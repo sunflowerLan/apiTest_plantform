@@ -1,8 +1,27 @@
-<h1>登录测试平台</h1>
+{% extends 'base.html' %}
+{% block tittle%}
+用户登录
+{% endblock %}
 
-<form action="/user/login_action/" method="get">
-    用户名：<input type="text" name="username"><br>
-    密码：  <input type="password" name="password"><br>
+{% block body%}
+<form class="form-signin" action="/user/login_action/" method="post">
+    {% csrf_token %}
+        <h1 class="h3 mb-3 font-weight-normal">登 录</h1>
+       <label for="username" class="sr-only">用户名：</label>
+     <input type="text" id="username" class="form-control" placeholder="UserName" required autofocus name="username">
+      <!--<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>-->
+      <label for="inputPassword" class="sr-only">密码：</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
+
     {{ error_message }}<br>
-    <button type="submit" value="login">登录</button>
+
+    <!--<div class="checkbox mb-3">-->
+        <!--<label>-->
+          <!--<input type="checkbox" value="remember-me"> Remember me-->
+        <!--</label>-->
+      <!--</div>-->
+      <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
 </form>
+
+{% endblock %}
