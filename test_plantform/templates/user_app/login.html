@@ -3,8 +3,15 @@
 用户登录
 {% endblock %}
 
+{% block css %}
+  {% load static %}
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/signin.css' %}">
+{% endblock %}
+
 {% block body%}
-<form class="form-signin" action="/user/login_action/" method="post">
+<div class="container">
+    <form class="form-signin" action="/user/login_action/" method="post">
     {% csrf_token %}
         <h1 class="h3 mb-3 font-weight-normal">登 录</h1>
        <label for="username" class="sr-only">用户名：</label>
@@ -13,7 +20,7 @@
       <label for="inputPassword" class="sr-only">密码：</label>
       <input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
 
-    {{ error_message }}<br>
+    <p class="text-danger">{{ error_message }}</p>
 
     <!--<div class="checkbox mb-3">-->
         <!--<label>-->
@@ -22,6 +29,7 @@
       <!--</div>-->
       <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
-</form>
+    </form>
+</div>
 
 {% endblock %}
