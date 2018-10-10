@@ -3,10 +3,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 # from .models import User
 from django.contrib import auth
-
+import project_app.views
 # Create your views here.
 from django.urls import reverse
-
 
 def index(request):
 
@@ -52,7 +51,8 @@ def project_manage(request):
     # username = request.COOKIES.get('u',None) #读取cookie
     username = request.session.get('u', None) #读取session
     # print(username)
-    return render(request, "user_app/project_manage.html", {'user': username})
+    project_all = project_app.views.find_project_list()
+    return render(request, "user_app/project_manage.html", {'user': username, 'project_list': project_all})
 
 def logout(request):
     # request.session.flush()
