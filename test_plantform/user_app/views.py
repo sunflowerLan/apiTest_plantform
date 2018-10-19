@@ -1,9 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-# from .models import User
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.contrib import auth
-import project_app.views
 # Create your views here.
 from django.urls import reverse
 
@@ -17,20 +15,21 @@ def login_action(request):
     if request.method == "POST":
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
-        # print("username : %s , password : %s" %(username, password))
+        # print("username : %s , password : %s" % (username, password))
 
         # 使用自带的auth_user表结构
         user = auth.authenticate(username=username, password=password)
         if user is not None:
-            auth.login(request, user) #记录用户的登录状态
+            # 记录用户的登录状态
+            auth.login(request, user)
             # 使用session
             # request.session.set_expiry(3600)
             # request.session['is_login'] = True
             request.session['u'] = user.username
 
-            #使用cookie
+            # 使用cookie
             # response.set_cookie('u', user, expires=3600)
-            return HttpResponseRedirect(reverse('project_manage'))  # 页面跳转
+            return HttpResponseRedirect('/manage/project_manage/')  # 页面跳转
         else:
             error_message = "用户名或密码错误。"
             return render(request, "user_app/login.html", {"error_message": error_message})
@@ -46,13 +45,12 @@ def login_action(request):
 
     return render(request, "user_app/login.html")
 
-@login_required #判断用户是否登录
-def project_manage(request):
-    # username = request.COOKIES.get('u',None) #读取cookie
-    username = request.session.get('u', None) #读取session
-    # print(username)
-    project_all = project_app.views.find_project_list()
-    return render(request, "user_app/project_manage.html", {'user': username, 'project_list': project_all})
+# @login_required #判断用户是否登录
+# def project_manage(request):
+#     # username = request.COOKIES.get('u',None) #读取cookie
+#     username = request.session.get('u', None) #读取session
+#     project_all = project_app.views.find_project_list()
+#     return render(request, "project_app/project_manage.html", {'user': username, 'project_list': project_all})
 
 def logout(request):
     # request.session.flush()

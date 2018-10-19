@@ -2,11 +2,26 @@ from django.db import models
 
 # Create your models here.
 class Project(models.Model):
-    projectNumber_text = models.CharField(max_length=50)
-    projectName_text = models.CharField(max_length=200)
-    startDate = models.DateField(auto_now=False, auto_now_add=False)
-    projectManager_text = models.CharField(max_length=50)
-    projectDes_text = models.TextField(max_length=500)
+    """
+    项目表
+    """
+    name = models.CharField("项目名称", max_length=100, blank=False, default="")
+    describe = models.TextField("项目描述", default="")
+    status = models.BooleanField("项目状态", default=True)
+    create_time = models.DateTimeField("创建时间", auto_now=True)
 
     def __str__(self):
-        return self.projectName_text
+        return self.name
+
+class Module(models.Model):
+    """
+    模块表
+    """
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    name = models.CharField("项目名称", max_length=100, blank=False, default="")
+    describe = models.TextField("项目描述", default="")
+    create_time = models.DateTimeField("创建时间", auto_now=True)
+
+    def __str__(self):
+        return self.name
+

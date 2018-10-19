@@ -1,55 +1,67 @@
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import Project
+from .forms import ProjectForm
 
 
 # Create your views here.
+@login_required
+def project_list(request):
+    # 读取session
+    username = request.session.get('u', None)
+    return render(request, 'project_app/project_manage.html', {'user': username, 'type': 'list', 'project_list': Project.objects.all()})
 
-def add_action(request):
-    return render(request, "project_app/project_add.html")
+@login_required
+def add_project(request):
+    # 如果form通过POST方法发送数据
+    if request.method == 'POST':
+        # 接受request.POST参数构造form类的实例
+        form = ProjectForm(request.POST)
+        # 验证数据是否合法
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            describe = form.cleaned_data["describe"]
+            status = form.cleaned_data["status"]
+            # create_time = form.cleaned_data["create_time"]
+            project = Project(name=name, describe=describe, status=status)
+            project.save()
+            # return HttpResponse("添加成功")
+            return HttpResponseRedirect('/manage/project_manage/')
+    # 如果是通过GET方法请求数据，返回一个空的表单
+    else:
+        form = ProjectForm()
+    return render(request, 'project_app/project_manage.html', {'type': 'add', 'form': form})
 
+@login_required
+def edit_project(request, project_id):
+    # print("编辑项目的id:", project_id)
+    if request.method == 'POST':
+        # 接受request.POST参数构造form类的实例
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            # 数据库查询数据
+            project = Project.objects.get(id=project_id)
+            # 更新数据
+            project.name = form.cleaned_data['name']
+            project.describe = form.cleaned_data["describe"]
+            project.status = form.cleaned_data["status"]
+            # 保存
+            project.save()
+            return HttpResponseRedirect('/manage/project_manage/')
+    else:
+        if project_id:
+            project = Project.objects.get(id=project_id)
+            form = ProjectForm(instance=project)
+        else:
+            form = ProjectForm()
+        return render(request, "project_app/project_manage.html",{'type': 'edit','project_id':project_id, 'form': form})
 
-def save_action(request):
-    project_number = request.POST.get("projectID", None)
-    project_name = request.POST.get("projectName", None)
-    begin_date = request.POST.get("beginDate", None)
-    project_manager = request.POST.get("projectManager", None)
-    project_des = request.POST.get("projectDes", None)
-    project = Project(projectNumber_text=project_number, projectName_text=project_name, startDate=begin_date,
-                      projectManager_text=project_manager, projectDes_text=project_des)
-    project.save()
-    # return HttpResponse("添加成功")
-    return render(request, "user_app/project_manage.html", {'project_list': find_project_list()})
-
-
-def find_project_list():
-    project_list = Project.objects.all()
-    return project_list
-
-def find_project_by_projectId(project_id):
-    project = Project.objects.get(projectNumber_text=project_id)
-    return project
-
-def open_editpage(request, project_id):
-    return render(request, "project_app/project_edit.html", {'project': find_project_by_projectId(project_id)})
-
-def update_action(request,project_id):
-    # 数据库查询数据
-    project = Project.objects.get(projectNumber_text=project_id)
-    # 更新数据
-    project.projectName_text = request.POST.get("projectName", None)
-    project.projectManager_text = request.POST.get("projectManager", None)
-    project.projectDes_text = request.POST.get("projectDes", None)
-    project.startDate = request.POST.get("beginDate", None)
-    # 保存
-    project.save()
-    return render(request, "user_app/project_manage.html", {'project_list': find_project_list()})
-
-
-def delete_action(request, project_id):
+@login_required
+def delete_project(request, project_id):
     # 获取参数
     # project_number = request.GET.get()
     # 数据库查找待删除数据
-    project = Project.objects.get(projectNumber_text=project_id)
+    project = Project.objects.get(id=project_id)
     project.delete()
-    return render(request, "user_app/project_manage.html", {'project_list': find_project_list()})
+    return HttpResponseRedirect('/manage/project_manage/')
