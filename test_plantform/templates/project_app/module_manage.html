@@ -29,15 +29,15 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="/manage/project_manage/">
+                <a class="nav-link" href="/manage/project_manage/">
                   <span data-feather="home"></span>
-                  项目管理 <span class="sr-only">(current)</span>
+                  项目管理
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/manage/module_manage/">
+                <a class="nav-link active" href="/manage/module_manage/">
                   <span data-feather="file"></span>
-                  模块管理
+                  模块管理 <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -91,35 +91,34 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
             <h1 class="h2">项目列表</h1>
             <p>
-              <a class="btn btn-primary" href="/manage/add_project">新 增</a>
+              <a class="btn btn-primary" href="/manage/add_module">新 增</a>
             </p>
           </div>
           <div class="table-responsive">
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>项目编号</th>
-                  <th>项目名称</th>
-                  <th>项目概况</th>
-                  <th>项目状态</th>
+                  <th>模块编号</th>
+                  <th>模块名称</th>
+                  <th>模块概况</th>
+                  <th>所属项目</th>
                   <th>创建日期</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
-                {% for project in project_list %}
+                {% for module in module_list %}
                   <tr>
-                    <td>{{ project.id }}</td>
-                    <td>{{ project.name }}</td>
-                    <td>{{ project.describe }}</td>
-                    <td>{{ project.status}}</td>
-                    <td>{{ project.describe }}</td>
-                    <td>{{project.create_time|date:"Y-m-d H:i:s"}}</td>
+                    <td>{{ module.id }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.describe }}</td>
+                    <td>{{ module.project}}</td>
+                    <td>{{ module.create_time|date:"Y-m-d H:i:s" }}</td>
                     <td>
                       <!--使用url标签跳转，使用urls.py中的name属性，与path地址无关-->
-                      <a href="/manage/edit_project/{{project.id}}/" class="btn btn-sm btn-primary">修改</a>
+                      <a href="/manage/edit_module/{{module.id}}/" class="btn btn-sm btn-primary">修改</a>
                       <!--直接跳转url地址的方式，参数直接跟在url地址中-->
-                      <a href="/manage/delete_project/{{project.id}}/" class="btn btn-sm btn-danger">删除</a>
+                      <a href="/manage/delete_module/{{module.id}}/" class="btn btn-sm btn-danger">删除</a>
                     </td>
                   </tr>
                 {% endfor %}
@@ -129,23 +128,23 @@
           {% endif %}
 
           {% if type == 'add' %}
-            <h3>新增项目</h3>
-             <form action="/manage/add_project/" method="post">
+            <h3>新增模块</h3>
+             <form action="/manage/add_module/" method="post">
               {% csrf_token %}
                {{ form.as_p }}
               <button class="btn btn-primary btn-sm" type="submit">保存</button>
-              <a class="btn btn-primary btn-sm" href="/manage/project_manage">取消</a>
+              <a class="btn btn-primary btn-sm" href="/manage/module_manage">取消</a>
             </form>
           {% endif %}
 
           {% if type == 'edit' %}
-            <h3>编辑项目</h3>
-          <form role="form" method="post">
-          {% csrf_token %}
+            <h3>编辑模块</h3>
+            <form method="post">
+                {% csrf_token %}
               {{ form.as_p }}
               <br>
               <button class="btn btn-primary btn-sm" type="submit">保存</button>
-              <a class="btn btn-primary btn-sm" href="/manage/project_manage">取消</a>
+              <a class="btn btn-primary btn-sm" href="/manage/module_manage">取消</a>
           </form>
           {% endif %}
         </main>

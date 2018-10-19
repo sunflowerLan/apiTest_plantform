@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .models import Project
-from .forms import ProjectForm
+from project_app.models import Project
+from project_app.forms import ProjectForm
 
 
 # Create your views here.
@@ -53,9 +53,8 @@ def edit_project(request, project_id):
         if project_id:
             project = Project.objects.get(id=project_id)
             form = ProjectForm(instance=project)
-        else:
-            form = ProjectForm()
-        return render(request, "project_app/project_manage.html",{'type': 'edit','project_id':project_id, 'form': form})
+
+        return render(request, "project_app/project_manage.html",{'type': 'edit', 'form': form})
 
 @login_required
 def delete_project(request, project_id):

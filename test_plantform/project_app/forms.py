@@ -1,5 +1,6 @@
 from django.forms import ModelForm
-from .models import Project
+from .models import Project, Module
+
 
 # 方法一：直接继承Form
 # class ProjectForm(forms.Form):
@@ -9,7 +10,6 @@ from .models import Project
 #     describe = forms.CharField(label="项目描述", widget=forms.Textarea)
 
 # 方法二：结合Model，继承django.forms.ModelForm
-
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
@@ -18,3 +18,8 @@ class ProjectForm(ModelForm):
 
         # 屏蔽的字段
         exclude = ['create_time']
+
+class ModuleForm(ModelForm):
+    class Meta:
+        model = Module
+        exclude =["create_time"]
