@@ -41,7 +41,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/interface/case_manage/">
                   <span data-feather="shopping-cart"></span>
                   用例管理
                 </a>
@@ -89,9 +89,9 @@
           <!--列表展示-->
           {% if type == 'list' %}
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
-            <h1 class="h2">项目列表</h1>
+            <h1 class="h2" id="module_list">模块列表</h1>
             <p>
-              <a class="btn btn-primary" href="/manage/add_module">新 增</a>
+              <a class="btn btn-primary" href="/manage/add_module" id="add_module">新 增</a>
             </p>
           </div>
           <div class="table-responsive">
@@ -132,7 +132,7 @@
              <form action="/manage/add_module/" method="post">
               {% csrf_token %}
                {{ form.as_p }}
-              <button class="btn btn-primary btn-sm" type="submit">保存</button>
+              <button class="btn btn-primary btn-sm" type="submit" id="save_module">保存</button>
               <a class="btn btn-primary btn-sm" href="/manage/module_manage">取消</a>
             </form>
           {% endif %}

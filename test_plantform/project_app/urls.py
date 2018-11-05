@@ -10,7 +10,7 @@ urlpatterns = [
 
     # 模块
     path('module_manage/', module_views.module_manage),
-    path('add_module/', module_views.add_module),
+    path('add_module/', module_views.add_module_action),
     path('edit_module/<int:module_id>/', module_views.edit_module),
     path('delete_module/<int:module_id>/', module_views.delete_module)
 ]

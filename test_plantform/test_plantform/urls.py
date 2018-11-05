@@ -21,6 +21,7 @@ import user_app.views
 urlpatterns = [
     url('', include(('user_app.urls'))),
     url('manage/', include(('project_app.urls', 'project'), namespace='project')),
+    url('interface/', include(('interface_app.urls', 'interface'), namespace='interface')),
     path('admin/', admin.site.urls),
 
 ]

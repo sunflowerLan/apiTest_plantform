@@ -12,7 +12,7 @@ def module_manage(request):
     return render(request, 'project_app/module_manage.html', {'user': username, 'type': 'list', 'module_list': Module.objects.all()})
 
 @login_required
-def add_module(request):
+def add_module_action(request):
     # 如果form通过POST方法发送数据
     if request.method == 'POST':
         # 接受request.POST参数构造form类的实例
@@ -33,8 +33,11 @@ def add_module(request):
 
 @login_required
 def edit_module(request, module_id):
-    # print("编辑项目的id:", project_id)
+    print("编辑模块的id:", module_id)
     if request.method == 'POST':
+        # print(request.POST.get("project"))
+        # print(request.POST.get("name"))
+        # print(request.POST.get("describe"))
         # 接受request.POST参数构造form类的实例
         form = ModuleForm(request.POST)
         if form.is_valid():
@@ -48,10 +51,9 @@ def edit_module(request, module_id):
             module.save()
             return HttpResponseRedirect('/manage/module_manage/')
     else:
-        if module_id:
-            module = Module.objects.get(id=module_id)
-            form = ModuleForm(instance=module)
-        return render(request, "project_app/module_manage.html",{'type': 'edit', 'form': form})
+        module = Module.objects.get(id=module_id)
+        form = ModuleForm(instance=module)
+    return render(request, "project_app/module_manage.html",{'type': 'edit', 'form': form})
 
 @login_required
 def delete_module(request, module_id):

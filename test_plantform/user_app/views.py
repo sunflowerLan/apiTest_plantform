@@ -31,7 +31,7 @@ def login_action(request):
             # response.set_cookie('u', user, expires=3600)
             return HttpResponseRedirect('/manage/project_manage/')  # 页面跳转
         else:
-            error_message = "用户名或密码错误。"
+            error_message = "用户名或密码错误"
             return render(request, "user_app/login.html", {"error_message": error_message})
 
         # 使用定义的user表结构
@@ -51,7 +51,7 @@ def login_action(request):
 #     username = request.session.get('u', None) #读取session
 #     project_all = project_app.views.find_project_list()
 #     return render(request, "project_app/project_manage.html", {'user': username, 'project_list': project_all})
-
+@login_required
 def logout(request):
     # request.session.flush()
     # 或者使用下面的方法

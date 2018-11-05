@@ -18,6 +18,7 @@ def add_project(request):
     if request.method == 'POST':
         # 接受request.POST参数构造form类的实例
         form = ProjectForm(request.POST)
+        # print(request.POST)
         # 验证数据是否合法
         if form.is_valid():
             name = form.cleaned_data["name"]
@@ -50,11 +51,10 @@ def edit_project(request, project_id):
             project.save()
             return HttpResponseRedirect('/manage/project_manage/')
     else:
-        if project_id:
-            project = Project.objects.get(id=project_id)
-            form = ProjectForm(instance=project)
+        project = Project.objects.get(id=project_id)
+        form = ProjectForm(instance=project)
 
-        return render(request, "project_app/project_manage.html",{'type': 'edit', 'form': form})
+    return render(request, "project_app/project_manage.html",{'type': 'edit', 'form': form})
 
 @login_required
 def delete_project(request, project_id):

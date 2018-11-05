@@ -18,6 +18,8 @@ class ProjectForm(ModelForm):
 
         # 屏蔽的字段
         exclude = ['create_time']
+        # ordering = ['create_time']
+
 
 class ModuleForm(ModelForm):
     class Meta:
