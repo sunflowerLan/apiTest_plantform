@@ -12,5 +12,8 @@ urlpatterns = [
     path('module_manage/', module_views.module_manage),
     path('add_module/', module_views.add_module_action),
     path('edit_module/<int:module_id>/', module_views.edit_module),
-    path('delete_module/<int:module_id>/', module_views.delete_module)
+    path('delete_module/<int:module_id>/', module_views.delete_module),
+
+    # 通过项目查找所有关联的模块
+    path('find_modules_of_project/', module_views.find_modules_of_project)
 ]

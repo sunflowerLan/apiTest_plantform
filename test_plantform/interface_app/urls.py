@@ -6,6 +6,7 @@ urlpatterns = [
     path('case_manage/', views.case_manage, name='case_manage'),
     path('api_debug/', views.api_debug, name='api_debug'),
     path('debug/', views.debug),
-    # path('edit_project/<int:project_id>/', views.edit_project, name='edit'),
-    # path('delete_project/<int:project_id>/', views.delete_project, name='delete'),
+    path('save_case/', views.save_case),
+    path('edit_case/<int:case_id>/', views.edit_case, name='edit'),
+    path('delete_case/<int:case_id>/', views.delete_case, name='delete'),
 ]

@@ -98,34 +98,59 @@
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>项目编号</th>
-                  <th>项目名称</th>
-                  <th>项目概况</th>
-                  <th>项目状态</th>
+                  <th>用例编号</th>
+                  <th>用例名称</th>
+                  <th>URL</th>
+                  <th>方法</th>
+                  <th>所属模块</th>
                   <th>创建日期</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
-                {% for project in project_list %}
+                {% for case in testcases %}
                   <tr>
-                    <td>{{ project.id }}</td>
-                    <td>{{ project.name }}</td>
-                    <td>{{ project.describe }}</td>
-                    <td>{{ project.status}}</td>
-                    <td>{{ project.describe }}</td>
-                    <td>{{project.create_time|date:"Y-m-d H:i:s"}}</td>
+                    <td>{{ case.id }}</td>
+                    <td>{{ case.name }}</td>
+                    <td>{{ case.url }}</td>
+                    <td>{{ case.req_method}}</td>
+                    <td>{{ case.module }}</td>
+                    <td>{{case.create_time|date:"Y-m-d H:i:s"}}</td>
                     <td>
                       <!--使用url标签跳转，使用urls.py中的name属性，与path地址无关-->
-                      <a href="/manage/edit_project/{{project.id}}/" class="btn btn-sm btn-primary">修改</a>
+                      <a href="/interface/edit_case/{{case.id}}/" class="btn btn-sm btn-primary">修改</a>
                       <!--直接跳转url地址的方式，参数直接跟在url地址中-->
-                      <a href="/manage/delete_project/{{project.id}}/" class="btn btn-sm btn-danger">删除</a>
+                      <a href="/interface/delete_case/{{case.id}}/" class="btn btn-sm btn-danger">删除</a>
                     </td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+
+          <!-- 列表分页器 -->
+            <div class="pagination">
+                <span class="step-links">
+                    <ul class="pagination">
+                        {% if testcases.has_previous %}
+                            <li><a href="?page={{ testcases.previous_page_number }}">&laquo;</a></li>
+                        {% endif %}
+
+                        <li><a href="#">{{ testcases.number }}</a></li>
+
+                        {% if testcases.has_next %}
+                            <li><a href="?page={{ testcases.next_page_number }}">&raquo;</a></li>
+                            <!--{% if case_name %}-->
+                                <!--<li><a href="?case_name={{ case_name }}&page={{ testcases.next_page_number }}">&raquo;</a></li>-->
+                            <!--{% else %}-->
+                                <!--<li><a href="?page={{ testcases.next_page_number }}">&raquo;</a></li>-->
+                            <!--{% endif %}-->
+                        {% endif %}
+                        <li><a href="#">共：{{ testcases.paginator.num_pages }} 页</a></li>
+                    </ul>
+                </span>
+            </div>
+
           {% endif %}
 
           {% if type == 'debug' %}
@@ -134,13 +159,13 @@
           {% endif %}
 
           {% if type == 'edit' %}
-            <h3>编辑项目</h3>
+            <h3>编辑用例</h3>
           <form role="form" method="post">
-          {% csrf_token %}
+              {% csrf_token %}
               {{ form.as_p }}
               <br>
               <button class="btn btn-primary btn-sm" type="submit">保存</button>
-              <a class="btn btn-primary btn-sm" href="/manage/project_manage">取消</a>
+              <a class="btn btn-primary btn-sm" href="/interface/case_manage">取消</a>
           </form>
           {% endif %}
         </main>

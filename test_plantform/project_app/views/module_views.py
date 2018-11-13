@@ -1,7 +1,9 @@
+import json
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
-from project_app.models import Module
+from project_app.models import Module, Project
 from project_app.forms import ModuleForm
 
 # Create your views here.
@@ -63,3 +65,19 @@ def delete_module(request, module_id):
     module = Module.objects.get(id=module_id)
     module.delete()
     return HttpResponseRedirect('/manage/module_manage/')
+
+# 通过project_id返回项目下所有的模块
+def find_modules_of_project(request):
+    project_id = request.GET.get("project_id")
+    # project = Project.objects.filter(id=project_id)
+    # modules = project.module_set.all()
+    modules = Module.objects.filter(project__id=project_id)
+    module_list = []
+    if len(modules) != 0:
+        for module in modules:
+            module_data = {}
+            module_data["id"] = module.id
+            module_data["name"] = module.name
+            module_list.append(module_data)
+    # print(module_list)
+    return JsonResponse({"success": "true", "data": module_list})
