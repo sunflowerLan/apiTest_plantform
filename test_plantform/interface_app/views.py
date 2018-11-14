@@ -1,6 +1,7 @@
 import re
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from project_app.models import Project
@@ -17,7 +18,7 @@ def case_manage(request):
     username = request.session.get('u', None)
     testcase = TestCase.objects.all()
     # 分页
-    paginator = Paginator(testcase, 5)
+    paginator = Paginator(testcase, 3)
     page = request.GET.get('page')
     try:
         contacts = paginator.page(page)
@@ -33,7 +34,36 @@ def case_manage(request):
     else:
         return HttpResponse("404")
 
-# 创建接口
+# 查询
+def search_case(request):
+    if request.method == "POST":
+        case_name = request.POST.get("case_name")
+        case_module = request.POST.get("case_module")
+        # print(case_name, case_module)
+
+        # 判断查询条件是否为空
+        if case_name.strip() == "":
+            testcase = TestCase.objects.all()
+        else:
+            testcase = TestCase.objects.filter(Q(name__icontains=case_name))
+
+        # 分页
+        paginator = Paginator(testcase, 3)
+        page = request.GET.get('page')
+        try:
+            contacts = paginator.page(page)
+        except PageNotAnInteger:
+            # 如果页数不是整型, 取第一页.
+            contacts = paginator.page(1)
+        except EmptyPage:
+            # 如果页数超出查询范围，取最后一页
+            contacts = paginator.page(paginator.num_pages)
+            return render(request, 'interface_app/case_manage.html',
+                          {'type': 'list', 'testcases': contacts, 'case_name': case_name, 'module': case_module})
+    else:
+        return HttpResponse("404")
+
+# 进入调试接口页面
 def api_debug(request):
     if request.method == "GET":
         project_list = Project.objects.all()
@@ -41,6 +71,7 @@ def api_debug(request):
     else:
         return HttpResponse("404")
 
+# 调试接口
 @login_required
 def debug(request):
     # print("request method:" + request.method)

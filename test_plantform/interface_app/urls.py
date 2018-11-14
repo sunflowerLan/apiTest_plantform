@@ -9,4 +9,5 @@ urlpatterns = [
     path('save_case/', views.save_case),
     path('edit_case/<int:case_id>/', views.edit_case, name='edit'),
     path('delete_case/<int:case_id>/', views.delete_case, name='delete'),
+    path('search_case/', views.search_case, name="search"),
 ]
