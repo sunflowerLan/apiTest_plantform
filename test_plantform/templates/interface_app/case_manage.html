@@ -92,7 +92,7 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
             <h1 class="h2">用例列表</h1>
             <p>
-              <a class="btn btn-primary" href="/interface/api_debug/">调试</a>
+              <a class="btn btn-primary" href="/interface/add_case/">新增</a>
             </p>
           </div>
           <div class="table-responsive">
@@ -175,20 +175,14 @@
 
           {% endif %}
 
-          {% if type == 'debug' %}
+          {% if type == 'add' %}
             <!--在线debug-->
-            {% include "interface_app/api_debug.html" %}
+            {% include "interface_app/add_case.html" %}
           {% endif %}
 
           {% if type == 'edit' %}
-            <h3>编辑用例</h3>
-          <form role="form" method="post">
-              {% csrf_token %}
-              {{ form.as_p }}
-              <br>
-              <button class="btn btn-primary btn-sm" type="submit">保存</button>
-              <a class="btn btn-primary btn-sm" href="/interface/case_manage">取消</a>
-          </form>
+            <!--编辑case-->
+            {% include "interface_app/edit_case.html" %}
           {% endif %}
         </main>
       </div>
