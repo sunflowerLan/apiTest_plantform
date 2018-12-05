@@ -120,7 +120,8 @@
           let assert_text = $('#assert_text').val();
           // 处理请求参数
             if (module_id ===""){
-                window.alert("请选择所属模块")
+                window.alert("请选择所属模块");
+                return;
             }
           let parameter_new ="";
           if (parameter ===""){
@@ -152,6 +153,7 @@
               // console.log("前端url格式判断："+ objExp.test(url));
               if(objExp.test(url) != true){
                   window.alert("网址格式不正确！请重新输入");
+                  return;
               } else {
                   // url地址输入合法后，发送ajax请求
                   $.ajax({
@@ -185,7 +187,8 @@
             let result = $("#result").val();
 
             if (assert == "" || result == ""){
-                window.alert("验证结果和返回结果不能为空！")
+                window.alert("验证结果和返回结果不能为空！");
+                return;
             }
 
             $.ajax({

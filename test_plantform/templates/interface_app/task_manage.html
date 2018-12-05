@@ -41,15 +41,15 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/interface/case_manage/">
+                <a class="nav-link" href="/interface/case_manage/">
                   <span data-feather="shopping-cart"></span>
-                  用例管理<span class="sr-only">(current)</span>
+                  用例管理
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/interface/task_manage/">
+                <a class="nav-link active" href="/interface/task_manage/">
                   <span data-feather="users"></span>
-                  任务管理
+                  任务管理<span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -90,60 +90,47 @@
           {% if type == 'list' %}
 
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
-            <h1 class="h2">用例列表</h1>
+            <h1 class="h2">测试计划列表</h1>
             <p>
-              <a class="btn btn-primary" href="/interface/add_case/">新增</a>
+              <a class="btn btn-primary" href="/interface/add_task/">新增</a>
             </p>
           </div>
           <div class="table-responsive">
-              <form class="form-control" method="post" action="/interface/search_case/">
-                  {% csrf_token %}
-                    <div class="row">
-                        <div class="col">
-                          <div class="input-group">
-                              <span class="input-group-text">用例名称</span>
-                              <input id="case_name" type="text" class="form-control" placeholder="name" name="case_name" >
-                          </div>
-                        </div>
-
-                        <div class="col">
-                            <div class="input-group">
-                                <span class="input-group-text">所属模块</span>
-                                <input id="case_module" type="text" class="form-control" placeholder="module" name="case_module" >
-                            </div>
-                        </div>
-                    </div>
-                  <br>
-                <button class="btn btn-primary" type="submit" id="search">查询</button>
-
-              </form>
 
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>用例编号</th>
-                  <th>用例名称</th>
-                  <th>URL</th>
-                  <th>方法</th>
-                  <th>所属模块</th>
+                  <th>id</th>
+                  <th>名称</th>
+                  <th>描述</th>
+                  <th>状态</th>
                   <th>创建日期</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
-                {% for case in testcases %}
+                {% for task in testtask %}
                   <tr>
-                    <td>{{ case.id }}</td>
-                    <td>{{ case.name }}</td>
-                    <td>{{ case.url }}</td>
-                    <td>{{ case.req_method}}</td>
-                    <td>{{ case.module }}</td>
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.describe }}</td>
+                      {% if task.status == 0 %}
+                    <td>未执行</td>
+                      {% endif %}
+
+                      {% if task.status == 1 %}
+                    <td>执行中</td>
+                      {% endif %}
+
+                      {% if task.status == 2 %}
+                    <td>已执行</td>
+                      {% endif %}
                     <td>{{case.create_time|date:"Y-m-d H:i:s"}}</td>
                     <td>
                       <!--使用url标签跳转，使用urls.py中的name属性，与path地址无关-->
-                      <a href="/interface/edit_case/{{case.id}}/" class="btn btn-sm btn-primary">修改</a>
+                      <a href="/interface/edit_task/{{task.id}}/" class="btn btn-sm btn-primary">修改</a>
                       <!--直接跳转url地址的方式，参数直接跟在url地址中-->
-                      <a href="/interface/delete_case/{{case.id}}/" class="btn btn-sm btn-danger">删除</a>
+                      <a href="/interface/delete_task/{{task.id}}/" class="btn btn-sm btn-danger">删除</a>
                     </td>
                   </tr>
                 {% endfor %}
@@ -155,20 +142,20 @@
             <div class="pagination">
                 <span class="step-links">
                     <ul class="pagination">
-                        {% if testcases.has_previous %}
-                            <li><a href="?page={{ testcases.previous_page_number }}">&laquo;</a></li>
+                        {% if testtask.has_previous %}
+                            <li><a href="?page={{ testtask.previous_page_number }}">&laquo;</a></li>
                         {% endif %}
 
-                        <li><a href="#">{{ testcases.number }}</a></li>
+                        <li><a href="#">{{ testtask.number }}</a></li>
 
-                        {% if testcases.has_next %}
+                        {% if testtask.has_next %}
                             {% if case_name %}
-                                <li><a href="?case_name={{ case_name }}&page={{ testcases.next_page_number }}">&raquo;</a></li>
+                                <li><a href="?case_name={{ case_name }}&page={{ testtask.next_page_number }}">&raquo;</a></li>
                             {% else %}
-                                <li><a href="?page={{ testcases.next_page_number }}">&raquo;</a></li>
+                                <li><a href="?page={{ testtask.next_page_number }}">&raquo;</a></li>
                             {% endif %}
                         {% endif %}
-                        <li><a href="#">共：{{ testcases.paginator.num_pages }} 页</a></li>
+                        <li><a href="#">共：{{ testtask.paginator.num_pages }} 页</a></li>
                     </ul>
                 </span>
             </div>
@@ -177,12 +164,12 @@
 
           {% if type == 'add' %}
             <!--在线debug-->
-            {% include "interface_app/add_case.html" %}
+            {% include "interface_app/add_task.html" %}
           {% endif %}
 
           {% if type == 'edit' %}
             <!--编辑case-->
-            {% include "interface_app/edit_case.html" %}
+            {% include "interface_app/edit_task.html" %}
           {% endif %}
         </main>
       </div>

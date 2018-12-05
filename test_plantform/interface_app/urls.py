@@ -1,15 +1,23 @@
 from django.urls import path, re_path
-from interface_app import views
+from .views import case_view, task_view
 
 urlpatterns = [
-    # 项目
-    path('case_manage/', views.case_manage, name='case_manage'),
-    path('add_case/', views.add_case, name='api_debug'),
-    path('api_debug/', views.debug),
-    path('save_case/', views.save_case),
-    path('edit_case/<int:case_id>/', views.edit_case, name='edit'),
-    path('delete_case/<int:case_id>/', views.delete_case, name='delete'),
-    path('search_case/', views.search_case, name="search"),
-    path('get_case_info/', views.get_case_info, name="getCaseInfo"),
-    path('api_assert/', views.api_assert),
+    # 测试用例
+    path('case_manage/', case_view.case_manage, name='case_manage'),
+    path('add_case/', case_view.add_case, name='api_debug'),
+    path('api_debug/', case_view.debug),
+    path('save_case/', case_view.save_case),
+    path('edit_case/<int:case_id>/', case_view.edit_case, name='edit'),
+    path('delete_case/<int:case_id>/', case_view.delete_case, name='delete'),
+    path('search_case/', case_view.search_case, name="search"),
+    path('get_case_info/', case_view.get_case_info, name="getCaseInfo"),
+    path('api_assert/', case_view.api_assert),
+    path('get_cases_list/', case_view.get_cases_list),
+
+    #测试计划
+    path('task_manage/', task_view.task_manage),
+    path('add_task/', task_view.add_task),
+    path('save_task/', task_view.save_task),
+    path('edit_task/<int:task_id>/', task_view.edit_task),
+    path('delete_task/<int:task_id>/', task_view.delete_task),
 ]

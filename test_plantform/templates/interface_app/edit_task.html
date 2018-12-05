@@ -1,0 +1,131 @@
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+{% load static %}
+<script src="{% static 'js/bootstrap-treeview.js' %}"></script>
+<script type="text/javascript" language="javascript">
+    // 获取csrftoken，解决403跨域问题
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    let csrftoken = getCookie('csrftoken');
+
+    $(function() {
+        let options = "";
+        $.ajax({
+              type: "GET",
+              url: "/interface/get_cases_list/",
+              data: {},
+              async: true,
+              success: function (data) {
+                  if (data.success){
+                      let cases = data.data;
+                      // console.log(cases);
+                      for (let i=0; i<cases.length;i++) {
+                        let option = '<input type="checkbox" name="'+ cases[i].name + '" value="'
+                            + cases[i].id + '"/>' + cases[i].name + ' <br>';
+                          options = options + option;
+                      }
+                      // console.log(options);
+                      $(".caseList").append(options);
+                  }
+                  else{
+                     window.alert(data.message);
+                  }
+              },
+              //=================== error============
+              error: function (jqXHR, textStatus, err) {
+                    console.log(arguments);
+              }
+      });
+
+        // 保存任务
+        $("#save").click(function () {
+            let task_name = $("#task_name").val();
+            let describe = $("#describe").val();
+            if (task_name === "") {
+                window.alert("任务名称不能为空！");
+            }
+            let selectList = new Array();
+            let selectCases = $(".caseList input");
+            for (let i=0; i<selectCases.length; i++){
+                if (selectCases[i].checked === true){
+                    let case_id = selectCases[i].value;
+                    selectList.push(case_id);
+                }
+            }
+            // console.log(selectList.join(','));
+            $.ajax({
+                type: "POST",
+                url: "/interface/save_task/",
+                data: {"task_name":task_name,"task_describe": describe,"task_cases":selectList.join(',')},
+                beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('X-CSRFToken', csrftoken)
+                        },
+                async: true,
+                success: function (res) {
+                    if (res.success) {
+                        window.alert(res.message);
+                    }else{
+                        window.alert(res.message);
+                    }
+                },
+               //=================== error============
+               error: function (jqXHR, textStatus, err) {
+                    console.log(arguments);
+               }
+            });
+        });
+
+    });
+</script>
+
+<form class="form-horizontal">
+    <fieldset>
+        <div id="legend" class="">
+            <legend class="">修改测试任务</legend>
+        </div>
+
+        <div style="width:80%; margin-left: 20px;">
+        <form action="/interface/debug/" method="post" class="bs-example bs-example-form" role="form" style="margin-top: 30px">
+            <!--{% csrf_token %}-->
+
+            <div class="form-group">
+                <label for="task_name">名称</label>
+                <input class="form-control" id="task_name" placeholder="name" name="task_name" value={{ task.name }}>
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label for="describe">描述</label>
+                <textarea class="form-control" id="describe" name=describe rows="3">{{ task.describe }}</textarea>
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label>用例：</label>
+                <div class="caseList" style="height: 200px; overflow-y: scroll;background: #ffffff;padding-left: 15px">
+
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <div style="width: 100%; height: 60px;">
+                <button type="button" class="btn btn-success" id="save" style="float: right;margin-right: 10px;">保存</button>
+            </div>
+        </form>
+        </div>
+
+    </fieldset>
+</form>

@@ -132,7 +132,8 @@
           let assert_text = $('#assert_text').val();
           // 处理请求参数
             if (module_id ===""){
-                window.alert("请选择所属模块")
+                window.alert("请选择所属模块");
+                return;
             }
           let parameter_new ="";
           if (parameter ===""){
@@ -152,6 +153,7 @@
           // 判断url不能为空
           if(url ===""){
               window.alert("url不能为空")
+              return;
           }else{
               // 正则表达式判断url是否合法
               let Expression= '^(?:http|ftp)s?://';
@@ -164,6 +166,7 @@
               // console.log("前端url格式判断："+ objExp.test(url));
               if(objExp.test(url) != true){
                   window.alert("网址格式不正确！请重新输入");
+                  return;
               } else {
                   // url地址输入合法后，发送ajax请求
                   $.ajax({
@@ -197,7 +200,8 @@
             let result = $("#result").val();
 
             if (assert == "" || result == ""){
-                window.alert("验证结果和返回结果不能为空！")
+                window.alert("验证结果和返回结果不能为空！");
+                return;
             }
 
             $.ajax({
@@ -241,7 +245,8 @@
           }
           // 判断url不能为空
           if(url ===""){
-              window.alert("url不能为空")
+              window.alert("url不能为空");
+              return;
           }else{
               // 正则表达式判断url是否合法
               let Expression= '^(?:http|ftp)s?://';
@@ -254,6 +259,7 @@
               // console.log("前端url格式判断："+ objExp.test(url));
               if(objExp.test(url) != true){
                   window.alert("网址格式不正确！请重新输入");
+                  return;
               } else {
                   // url地址输入合法后，发送ajax请求
                   $.ajax({

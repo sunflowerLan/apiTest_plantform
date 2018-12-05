@@ -6,8 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from project_app.models import Project
 from project_app.models import Module
-from .models import TestCase
-from .forms import TestCaseForm
+from interface_app.models import TestCase
 import requests
 import json
 
@@ -288,3 +287,29 @@ def api_assert(request):
             return JsonResponse({"success": "true", "message": "验证成功！"})
     else:
         return JsonResponse({"success": "false", "message": "请求方法有误！"})
+
+def get_cases_list(request):
+    """
+    获取测试用例列表
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        # 项目 -> 模块 -> 用例
+        cases_list = []
+        projects = Project.objects.all()
+        for project in projects:
+            modules = Module.objects.filter(project_id=project.id)
+            for module in modules:
+                cases = TestCase.objects.filter(module_id=module.id)
+                for case in cases:
+                    # case_dic = {'p_name': project.name, 'm_name': module.name, 'c_name': case.name}
+                    case_info = project.name + "->" + module.name + "->" + case.name
+                    case_dict = {
+                        "id": case.id,
+                        "name": case_info
+                    }
+                    cases_list.append(case_dict)
+        return JsonResponse({"success": "true", "message": "请求成功！", "data": cases_list})
+    else:
+        return JsonResponse({"success": "false", "message": "请求失败！"})
