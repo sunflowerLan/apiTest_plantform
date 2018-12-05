@@ -1,3 +1,5 @@
+from tkinter import Entry
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -41,15 +43,27 @@ def save_task(requeset):
     :return:
     """
     if requeset.method == "POST":
+        task_id = requeset.POST.get("task_id")
         task_name = requeset.POST.get("task_name")
         task_describe = requeset.POST.get("task_describe")
         cases = requeset.POST.get("task_cases")
         if task_name == "":
             return JsonResponse({"success": "false", "message": "任务名称不能为空"})
-        task = TestTask.objects.create(name=task_name, describe=task_describe, cases=cases)
-        if task is None:
-            return JsonResponse({"success": "false", "message": "保存失败"})
-        return JsonResponse({"success": "true", "message": "保存成功"})
+        if task_id:
+            try:
+                updatetask = TestTask.objects.get(pk=task_id)
+                updatetask.name = task_name
+                updatetask.describe = task_describe
+                updatetask.cases = cases
+                updatetask.save()
+                return JsonResponse({"success": "true", "message": "更新成功"})
+            except Entry.DoesNotExist:
+                return JsonResponse({"success": "false", "message": "更新失败"})
+        else:
+            task = TestTask.objects.create(name=task_name, describe=task_describe, cases=cases)
+            if task is None:
+                return JsonResponse({"success": "false", "message": "保存失败"})
+            return JsonResponse({"success": "true", "message": "保存成功"})
     else:
         return JsonResponse({"success": "false", "message": "请求错误"})
 

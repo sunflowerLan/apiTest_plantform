@@ -68,7 +68,7 @@
             $.ajax({
                 type: "POST",
                 url: "/interface/save_task/",
-                data: {"task_name":task_name,"task_describe": describe,"task_cases":selectList.join(',')},
+                data: {"task_id":"","task_name":task_name,"task_describe": describe,"task_cases":selectList.join(',')},
                 beforeSend: function (xhr, settings) {
                         xhr.setRequestHeader('X-CSRFToken', csrftoken)
                         },

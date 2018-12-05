@@ -22,6 +22,9 @@
 
     $(function() {
         let options = "";
+        // 获取caseId
+        let caseIdList = $("#casesId").text().split(",");
+        // console.log(caseIdList);
         $.ajax({
               type: "GET",
               url: "/interface/get_cases_list/",
@@ -32,8 +35,17 @@
                       let cases = data.data;
                       // console.log(cases);
                       for (let i=0; i<cases.length;i++) {
-                        let option = '<input type="checkbox" name="'+ cases[i].name + '" value="'
+                          let caseId = cases[i].id+"";
+                          // console.log("caseId:"+ caseId);
+                          let option = "";
+                          //如果当前caseid在所勾选的用例id中，就勾选
+                          if ($.inArray(caseId, caseIdList) == -1){
+                              option = '<input type="checkbox" name="'+ cases[i].name + '" value="'
                             + cases[i].id + '"/>' + cases[i].name + ' <br>';
+                          }else{
+                              option = '<input type="checkbox" name="'+ cases[i].name + '" value="'
+                            + cases[i].id + '" checked/>' + cases[i].name + ' <br>';
+                          }
                           options = options + option;
                       }
                       // console.log(options);
@@ -48,6 +60,11 @@
                     console.log(arguments);
               }
       });
+
+        // 获取url中的task_id
+        let url = document.location.pathname;
+        let arrUrl = url.split('/');
+        let task_id = arrUrl[3];
 
         // 保存任务
         $("#save").click(function () {
@@ -68,7 +85,7 @@
             $.ajax({
                 type: "POST",
                 url: "/interface/save_task/",
-                data: {"task_name":task_name,"task_describe": describe,"task_cases":selectList.join(',')},
+                data: {"task_id":task_id,"task_name":task_name,"task_describe": describe,"task_cases":selectList.join(',')},
                 beforeSend: function (xhr, settings) {
                         xhr.setRequestHeader('X-CSRFToken', csrftoken)
                         },
@@ -114,6 +131,7 @@
 
             <div class="form-group">
                 <label>用例：</label>
+                <p id="casesId" hidden>{{task.cases}}</p>
                 <div class="caseList" style="height: 200px; overflow-y: scroll;background: #ffffff;padding-left: 15px">
 
                 </div>
