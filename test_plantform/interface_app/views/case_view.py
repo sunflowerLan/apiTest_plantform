@@ -1,5 +1,6 @@
 import re
 from django.contrib.auth.decorators import login_required
+from django.core.handlers import exception
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -45,7 +46,7 @@ def case_manage(request):
     testcase = TestCase.objects.all().order_by('-create_time')
     # 分页
     page = request.GET.get('page')
-    contacts = pageInation(testcase, 5, page)
+    contacts = pageInation(testcase, 10, page)
     if request.method == "GET":
         return render(request, 'interface_app/case_manage.html', {'user': username, 'type': 'list', 'testcases': contacts})
     else:
@@ -106,28 +107,33 @@ def debug(request):
         req_type = request.GET.get("type")
         # print("url is:"+req_url)
         # print("请求参数:" + req_parameter)
-        # 判断url地址
-        if url_validate(req_url):
-            if req_method.upper() == "GET":   # get请求
-                r = requests.get(req_url, params=json.loads(req_parameter), headers=json.loads(req_headers))
-            elif req_method.upper() == "POST":  # post请求
-                if req_type == "form-data":
-                    r = requests.post(req_url, data=json.loads(req_parameter), headers=json.loads(req_headers))
-                else:
-                    r = requests.post(req_url, json=req_parameter, headers=json.loads(req_headers))
-            elif req_method.upper() == "PUT":
-                r = requests.put(req_url, data=json.loads(req_parameter))
-            elif req_method.upper() == "DELETE":
-                r = requests.delete(req_url)
-            elif req_method.upper() == "HEAD":
-                r = requests.head(req_url)
-            elif req_method.upper() == "OPTION":
-                r = requests.options(req_url)
-            # print(r.status_code)
-            # print(r.text)
-            return HttpResponse(json.dumps(r.text))
-        else:
-            return HttpResponse("请检查URL地址")
+        try:
+            # 判断url地址
+            if url_validate(req_url):
+                if req_method.upper() == "GET":   # get请求
+                    r = requests.get(req_url, params=json.loads(req_parameter), headers=json.loads(req_headers))
+                elif req_method.upper() == "POST":  # post请求
+                    if req_type == "form-data":
+                        r = requests.post(req_url, data=json.loads(req_parameter), headers=json.loads(req_headers))
+                    else:
+                        r = requests.post(req_url, json=req_parameter, headers=json.loads(req_headers))
+                elif req_method.upper() == "PUT":
+                    r = requests.put(req_url, data=json.loads(req_parameter))
+                elif req_method.upper() == "DELETE":
+                    r = requests.delete(req_url)
+                elif req_method.upper() == "HEAD":
+                    r = requests.head(req_url)
+                elif req_method.upper() == "OPTION":
+                    r = requests.options(req_url)
+                # print(r.status_code)
+                # print(r.text)
+                return HttpResponse(json.dumps(r.text))
+            else:
+                return HttpResponse("请检查URL地址")
+        except json.decoder.JSONDecodeError:
+            return HttpResponse("请检查header或参数格式填写是否正确！")
+        except BaseException:
+            return HttpResponse("调试失败，请检查信息是否正确填写！")
     else:
         return HttpResponse("请求方法错误")
 

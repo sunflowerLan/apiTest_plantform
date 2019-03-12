@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views import case_view, task_view
+from .views import case_view, task_view, result_view
 
 urlpatterns = [
     # 测试用例
@@ -18,6 +18,12 @@ urlpatterns = [
     path('task_manage/', task_view.task_manage),
     path('add_task/', task_view.add_task),
     path('save_task/', task_view.save_task),
+    path('run_task/<int:task_id>/', task_view.run_task),
     path('edit_task/<int:task_id>/', task_view.edit_task),
     path('delete_task/<int:task_id>/', task_view.delete_task),
+    path('is_task_run/', task_view.is_task_run),
+
+    # 测试结果
+    path('task_result_list/<int:task_id>/', result_view.task_result_list),
+    path('result_detail/', result_view.result_detail),
 ]

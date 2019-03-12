@@ -1,11 +1,16 @@
+import json
+import os
 from tkinter import Entry
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from test_plantform.common.common_view import pageInation
-from interface_app.models import TestTask
-
+from interface_app.models import TestTask, TestCase, TestResult
+from interface_app.apps import TASK_PATH, RUN_TASK_FILE
+from interface_app.extend.run_task import run_case
+from os.path import dirname, abspath
+from interface_app.extend.task_thread import TaskThread
 
 @login_required
 def task_manage(request):
@@ -25,6 +30,7 @@ def task_manage(request):
     else:
         return HttpResponse("404")
 
+
 def add_task(request):
     """
     打开新增测试任务页面
@@ -35,6 +41,7 @@ def add_task(request):
         return render(request, "interface_app/task_manage.html", {'type': 'add'})
     else:
         return HttpResponse("404")
+
 
 def save_task(requeset):
     """
@@ -67,6 +74,7 @@ def save_task(requeset):
     else:
         return JsonResponse({"success": "false", "message": "请求错误"})
 
+
 def edit_task(request, task_id):
     """
     编辑测试任务
@@ -74,13 +82,14 @@ def edit_task(request, task_id):
     :param task_id:
     :return:
     """
-    if request.method =="GET":
+    if request.method == "GET":
         task = TestTask.objects.get(pk=task_id)
         # print(task.name)
         return render(request, "interface_app/task_manage.html", {'type': 'edit', 'task': task})
         pass
     else:
         return HttpResponse("404")
+
 
 def delete_task(request, task_id):
     """
@@ -89,8 +98,41 @@ def delete_task(request, task_id):
     :param task_id:
     :return:
     """
-    if request.method =="GET":
+    if request.method == "GET":
         TestTask.objects.get(pk=task_id).delete()
         return HttpResponseRedirect('/interface/task_manage/')
     else:
         return HttpResponse("404")
+
+
+def run_task(request, task_id):
+    """
+    运行测试任务
+    :param request:
+    :return:
+    """
+    if request.method == "GET":
+        # task_id = request.GET.get("task_id")
+        print("进入异步多线程处理。。。")
+        TaskThread(task_id).run_thread()
+        print("测试任务在单独线程执行中，继续执行后续任务~~~")
+        return HttpResponseRedirect("/interface/task_manage/")
+    else:
+        return HttpResponse("404")
+
+
+def is_task_run(request):
+    """
+    如果有任务在执行，返回false；如果没有任务在执行，返回true
+    :param request:
+    :return: true：
+    """
+    if request.method == "GET":
+        tasks = TestTask.objects.filter(status=1)
+        print("当前运行的任务数：", len(tasks))
+        if len(tasks) > 0:
+            return JsonResponse({"success": "true", "message": "已有任务在运行中，请稍后执行！"})
+        else:
+            return JsonResponse({"success": "false", "message": "当前没有测试任务运行！"})
+    else:
+        return JsonResponse({"success": "true", "message": "请求方法有误，请重试！"})

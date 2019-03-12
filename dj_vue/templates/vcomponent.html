@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.5.21/vue.js"></script>
+    <title>first Vue</title>
+</head>
+<body>
+    {% verbatim myblock %}
+    <h1>组件</h1>
+    <template id="button-counter">
+        <!--每个组件必须只有一个根元素-->
+        <button v-on:click="count++">You clicked me {{ count }} times.</button>
+    </template>
+    <div id="com_demo">
+        <button-counter></button-counter>
+        <button-counter></button-counter>
+        <button-counter></button-counter>
+        <br>
+         <h2>在组件上使用 v-model</h2>
+        <custom-input v-model="searchText"></custom-input>
+        <br>
+        <span>组件输入的内容为：{{ searchText }}</span>
+
+        <br>
+        <h2>通过插槽分发内容</h2>
+        <template id="slot_temp">
+            <div class="demo-alert-box">
+              <strong>Error!</strong>
+              <slot></slot>
+            </div>
+        </template>
+        <alert-box>
+          Something bad happened.
+        </alert-box>
+
+        <child-component>
+            <template slot="girl">
+                漂亮、美丽、购物、逛街
+            </template>
+            <template slot="boy">
+                帅气、才实
+            </template>
+            <div>
+                我是一类人，
+                我是默认的插槽
+            </div>
+        </child-component>
+
+        <br>
+        <h2>动态组件</h2>
+        <div id="dynamic-component-demo" class="demo">
+            <button v-for="tab in tabs" :key="tab"
+                    :class="['tab-button', { active: currentTab === tab }]"
+                    @click="changeTab(tab)">{{ tab }}</button>
+            <component :is="currentTabComponent" class="tab"></component>
+        </div>
+    </div>
+
+    {% endverbatim myblock %}
+</body>
+<script>
+    // 动态组件:可以通过 Vue 的 <component> 元素加一个特殊的 is 特性来实现
+    Vue.component('tab-home', {
+        template: '<div>Home component</div>'
+    });
+    Vue.component('tab-posts', {
+        template: '<div>Posts component</div>'
+    });
+    Vue.component('tab-archive', {
+        template: '<div>Archive component</div>'
+    });
+    var dyn_comp = new Vue({
+      el: '#dynamic-component-demo',
+      data: {
+        currentTab: 'Home',
+        tabs: ['Home','Posts','Archive']
+      },
+      computed: {
+        currentTabComponent() {
+          return 'tab-' + this.currentTab.toLowerCase();
+        }
+      },
+        methods: {
+          changeTab(newtab){
+              alert(this.currentTab);
+              this.currentTab = newtab;
+          }
+        }
+    });
+
+    // 定义一个名为 button-counter 的新组件 全局组件
+    Vue.component('button-counter', {
+        // 一个组件的 data 选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝
+      //  否则多个子组件间的变量会相互影响
+      data: function () {
+        return {
+          count: 0
+        }
+      },
+      template: '#button-counter'
+    });
+
+    Vue.component('alert-box', {
+      template: '#slot_temp'
+    });
+
+     Vue.component('child-component',{
+        template:`
+            <div>
+            <h4>这个世界不仅有男人和女人</h4>
+            <slot name="girl"></slot>
+            <div style="height:1px;background-color:red;"></div>
+            <slot name="boy"></slot>
+            <div style="height:1px;background-color:red;"></div>
+            <slot></slot>
+            </div>
+        `
+    });
+
+    var com_demo = new Vue({
+        el: '#com_demo',
+        data: {
+            searchText: ''
+        },
+        computed:{
+
+        },
+        methods: {
+
+        },
+        // 局部组件，只能在此实例中使用
+        components:{
+            "custom-input":{
+                props: ['value'],
+                template: '<input\n' +
+                    '      v-bind:value="value"\n' +
+                    '      v-on:input="$emit(\'input\', $event.target.value)"\n' +
+                    '    >'
+            }
+
+        }
+    });
+
+</script>
+<style>
+    .tab-button {
+      padding: 6px 10px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background: #f0f0f0;
+      margin-bottom: -1px;
+      margin-right: -1px;
+    }
+    .tab-button:hover {
+      background: #e0e0e0;
+    }
+    .tab-button.active {
+      background: #e0e0e0;
+    }
+    .tab {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+</style>
+</html>

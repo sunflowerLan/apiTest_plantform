@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/fetch/2.0.4/fetch.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <title>登录</title>
+</head>
+<body>
+    {% verbatim myblock %}
+    <div id="app">
+        <div class="login-class">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item label="用户名" prop="name">
+                <el-input v-model="ruleForm.name"></el-input>
+              </el-form-item>
+
+                <el-form-item label="密码" prop="pwd">
+                <el-input v-model="ruleForm.pwd"></el-input>
+              </el-form-item>
+
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+              </el-form-item>
+            </el-form>
+        </div>
+    </div>
+
+    {% endverbatim myblock %}
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            ruleForm: {
+            name: '',
+            pwd: ''
+            },
+        rules: {
+          name: [
+            { required: true, message: '请输入用户名称', trigger: 'blur' },
+            { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+          ],
+          pwd: [
+            { required: true, message: '请输入用户密码', trigger: 'blur' },
+            { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+          ],
+          }
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                  if (valid) {
+                      // alert('用户名密码验证成功！');
+                      this.$message.success("用户名密码验证成功");
+                      this.login();
+                  } else {
+                      this.$message.error("请检查用户名密码输入！");
+                      // alert('请检查用户名密码输入！');
+                    // console.log('error submit!!');
+                    return false;
+                  }
+                });
+              },
+
+            login(){
+                fetch('/login_action/',{
+                    method: "POST",
+                    body: JSON.stringify(this.ruleForm)
+                }).then(function(response) {
+                    return response.json();
+                  }).then(function(data) {
+                      // console.log("data.success:" + data.success);
+                    if (data.success === true){
+                        // alert("恭喜你，登录成功！");
+                        app.$message({
+                            message: "恭喜你，登录成功",
+                            type: "success"
+                        });
+                        // this.$message.success("恭喜你，登录成功！");
+                    } else{
+                        app.$message.error("登录失败！");
+                    }
+                  });
+            }
+        }
+    });
+
+</script>
+<style>
+    .login-class{
+        width: 400px;
+        height: 400px;
+        /*border: 1px solid black;*/
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 200px;
+    }
+</style>
+</html>

@@ -87,6 +87,22 @@
             });
         });
 
+        // 全选/取消
+        $("#selectAll").click(function () {
+            let allCases = document.querySelectorAll(".caseList input");
+            let selectAll = document.getElementById("selectAll");
+            console.log(selectAll.checked);
+            if (selectAll.checked) {
+                for (let i=0; i<allCases.length; i++){
+                    allCases[i].checked = true;
+                }
+            }else{
+                for (let i=0; i<allCases.length; i++){
+                    allCases[i].checked = false;
+                }
+            }
+        });
+
     });
 </script>
 
@@ -114,6 +130,7 @@
 
             <div class="form-group">
                 <label>用例：</label>
+                <input type="checkbox" id="selectAll">全选/取消
                 <div class="caseList" style="height: 200px; overflow-y: scroll;background: #ffffff;padding-left: 15px">
 
                 </div>

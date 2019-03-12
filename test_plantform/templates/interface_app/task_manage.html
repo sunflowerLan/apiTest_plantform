@@ -36,31 +36,31 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/manage/module_manage/">
-                  <span data-feather="file"></span>
+                  <span data-feather="grid"></span>
                   模块管理
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/interface/case_manage/">
-                  <span data-feather="shopping-cart"></span>
+                  <span data-feather="list"></span>
                   用例管理
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="/interface/task_manage/">
-                  <span data-feather="users"></span>
+                  <span data-feather="check-square"></span>
                   任务管理<span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
+                  <span data-feather="server"></span>
                   mockserver
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
-                  <span data-feather="layers"></span>
+                  <span data-feather="command"></span>
                   测试工具
                 </a>
               </li>
@@ -75,7 +75,7 @@
             <ul class="nav flex-column mb-2">
               <li class="nav-item">
                 <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
+                  <span data-feather="pie-chart"></span>
                   缺陷报告
                 </a>
               </li>
@@ -125,12 +125,14 @@
                       {% if task.status == 2 %}
                     <td>已执行</td>
                       {% endif %}
-                    <td>{{case.create_time|date:"Y-m-d H:i:s"}}</td>
+                    <td>{{task.create_time|date:"Y-m-d H:i:s"}}</td>
                     <td>
-                      <!--使用url标签跳转，使用urls.py中的name属性，与path地址无关-->
-                      <a href="/interface/edit_task/{{task.id}}/" class="btn btn-sm btn-primary">修改</a>
+                        <a href="/interface/run_task/{{task.id}}" onclick="return is_task_run();"><span data-feather="play"></span></a>
+                      <!--<a href="/interface/run_task/{{task.id}}/" class="btn btn-sm btn-primary">运行</a>-->
+                      <a href="/interface/edit_task/{{task.id}}/"><span data-feather="edit"></span> </a>
                       <!--直接跳转url地址的方式，参数直接跟在url地址中-->
-                      <a href="/interface/delete_task/{{task.id}}/" class="btn btn-sm btn-danger">删除</a>
+                      <a href="/interface/delete_task/{{task.id}}/"><span data-feather="trash-2"></span></a>
+                        <a href="/interface/task_result_list/{{task.id}}/" ><span data-feather="file-text"></span></a>
                     </td>
                   </tr>
                 {% endfor %}
@@ -171,6 +173,10 @@
             <!--编辑case-->
             {% include "interface_app/edit_task.html" %}
           {% endif %}
+
+            {% if type == 'result' %}
+                {% include "interface_app/task_result.html" %}
+            {% endif %}
         </main>
       </div>
     </div>
@@ -180,8 +186,56 @@
 {% block script %}
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-
     <script>
       feather.replace()
+    </script>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        $("#runTask").click(function () {
+            let $td = $(this).parents('tr').children('td');
+            // 获取task.id
+            let task_id = $td.eq(0).text(); //第一个td的内容
+            // window.alert("当前任务的id为：" + task_id);
+            // window.alert("当前任务的状态为：" + $td.eq(3).text());
+            $.ajax({
+                type: "GET",
+                url: "/interface/run_task/",
+                data: {"task_id":task_id},
+                async: true,
+                // success: function (res) {
+                //     if (res.success) {
+                //         window.alert(res.message);
+                //     }else{
+                //         window.alert(res.message);
+                //     }
+                // },
+               //=================== error============
+               error: function (jqXHR, textStatus, err) {
+                    console.log(arguments);
+               }
+            });
+        });
+
+        function is_task_run() {
+            let flag = false;
+            $.ajax({
+                type: "GET",
+                url: "/interface/is_task_run/",
+                async: false,
+                success: function (resp) {
+                    if (resp.success === "true"){
+                        window.alert(resp.message);
+                        // console.log(resp.message);
+                    }
+                    else{
+                        // window.alert(resp.message);
+                        flag = true;
+                        window.location.reload();
+                    }
+                },
+            });
+            return flag;
+        }
     </script>
 {% endblock %}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.5.21/vue.js"></script>
+    <title>first Vue</title>
+</head>
+<body>
+    {% verbatim myblock %}
+    <h1>Html class</h1>
+    <div id="class_app">
+        <div class="div_class1" :class="{active: isActive, 'text-danger': hasError}">绑定变量</div>
+        <div :class="classObject">绑定对象</div>
+        <div :class="classObject2">返回对象的计算属性</div>
+        <div :class="[colorValue, alignValue]">数组语法</div>
+        <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">绑定内联样式</div>
+    </div>
+
+    <h1>条件渲染</h1>
+    <div id="if_app">
+        <div v-if="type === 'A'">
+          A
+        </div>
+        <div v-else-if="type === 'B'">
+          B
+        </div>
+        <div v-else-if="type === 'C'">
+          C
+        </div>
+        <div v-else>
+          Not A/B/C
+        </div>
+
+        <h2>用 key 管理可复用的元素</h2>
+        <template v-if="loginType === 'username'">
+          <label>Username</label>
+          <input placeholder="Enter your username" key="username-input">
+        </template>
+        <template v-else>
+          <label>Email</label>
+          <input placeholder="Enter your email address" key="email-input">
+        </template>
+        <br>
+        <button @click="toggleLoginType">切换login type</button>
+        <span>每次切换时，输入框都将被重新渲染</span>
+    </div>
+
+    <h1>表单输入绑定</h1>
+    <div id="form_app">
+        <input v-model="message" placeholder="edit me">
+        <p>Message is: {{ message }}</p>
+
+        <br>
+        <span>.lazy修饰符：在“change”时而非“input”时更新</span>
+        <input v-model.lazy="message">
+
+        <br>
+        <span>.number修饰符：自动将用户的输入值转为数值类型</span>
+        <input v-model.number="message" type="number">
+
+        <br>
+        <span>.trim修饰符：自动过滤用户输入的首尾空白字符</span>
+        <input v-model.trim="message" type="number">
+
+        <br>
+        <span>Multiline message is:</span>
+        <p style="white-space: pre-line;">{{ multi_text}}</p>
+        <textarea v-model="multi_text" placeholder="add multiple lines"></textarea>
+
+        <br>
+        <p>单个复选框，绑定到布尔值</p>
+        <input type="checkbox" id="checkbox" v-model="checked">
+        <label for="checkbox">{{ checked}}</label>
+
+        <br>
+        <p>多个复选框，绑定到同一个数组</p>
+        <div>
+            <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+            <label for="jack">Jack</label>
+            <input type="checkbox" id="john" value="John" v-model="checkedNames">
+            <label for="john">John</label>
+            <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+            <label for="mike">Mike</label>
+            <br>
+            <span>Checked names: {{ checkedNames }}</span>
+        </div>
+
+        <br>
+        <p>单选按钮</p>
+        <div>
+            <input type="radio" id="one" value="One" v-model="picked">
+            <label for="one">One</label>
+            <br>
+            <input type="radio" id="two" value="Two" v-model="picked">
+            <label for="two">Two</label>
+            <br>
+            <span>Picked: {{ picked }}</span>
+        </div>
+
+        <br>
+        <p>下拉选择框，单选</p>
+        <div>
+            <select v-model="selected">
+                <option disabled value="">请选择</option>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+            </select>
+            <span>Selected: {{ selected }}</span>
+        </div>
+
+        <br>
+        <p>下拉选择框，多选 绑定到数组</p>
+        <div>
+            <select v-model="multi_selected" multiple style="width: 50px;">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+            </select>
+            <span>Selected: {{ multi_selected }}</span>
+        </div>
+
+        <br>
+        <p>v-for动态渲染下拉选择框</p>
+        <div>
+            <select v-model="vfor_select.selected">
+                <option v-for="option in vfor_select.options" :value="option.value">
+                    {{ option.text }}
+                </option>
+            </select>
+            <span>Selected: {{ vfor_select.selected }}</span>
+        </div>
+
+    </div>
+
+
+    {% endverbatim myblock %}
+</body>
+<script>
+    var class_app = new Vue({
+        el: '#class_app',
+        data: {
+            isActive: true,
+            hasError: false,
+            classObject: {
+                active: true,
+                'text-danger': false
+            },
+            colorValue: "colorClass",
+            alignValue: "alignClass",
+            activeColor: "red",
+            fontSize: 34,
+        },
+        computed:{
+            classObject2: function () {
+                return{
+                    active: this.isActive && !this.hasError,
+                    'text-danger': this.hasError
+                }
+            }
+        },
+        methods: {
+
+        }
+    });
+
+    var if_app = new Vue({
+        el: "#if_app",
+        data: {
+            type: 'A',
+            loginType: 'username'
+        },
+        methods:{
+            toggleLoginType(){
+                if (this.loginType ==='username') {
+                    this.loginType = 'email';
+                }else{
+                    this.loginType = 'username';
+                }
+            }
+        }
+    });
+
+    var form_app = new Vue({
+        el:"#form_app",
+        data: {
+            message: "",
+            multi_text: "",
+            checked: false,
+            checkedNames: [],
+            picked: '',
+            selected: '',
+            multi_selected: [],
+            vfor_select:{
+                selected: 'A',
+                options: [
+                    {text: 'One', value: 'A'},
+                    {text: 'Two', value: 'B'},
+                    {text: 'Three', value: 'C'},
+                ]
+            }
+        },
+        methods:{
+
+        }
+    });
+
+</script>
+<style>
+    .div_class1{
+        color: red;
+    }
+    .colorClass{
+        color: #007bff;
+    }
+    .alignClass{
+        text-align: center;
+    }
+</style>
+</html>
